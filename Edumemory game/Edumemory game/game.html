@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>EduMemory Card Game</title>
+  <link rel="icon" type="image/png" sizes="64x64" href="edumemory game.png">
+  <style>
+    :root {
+      --bg: #0f1724;
+      --accent: #7dd3fc;
+      --muted: #94a3b8;
+      --surface: #071028;
+    }
+
+
+    * {
+      box-sizing: border-box;
+    }
+
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, sans-serif;
+      background: linear-gradient(180deg, #071028 0%, #08122a 100%);
+      color: #e6eef8;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+
+    .app {
+      width: 980px;
+      max-width: 96%;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(2, 6, 23, 0.6);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+
+    header {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+
+
+    header h1 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+
+    select,
+    button {
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+    }
+
+
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin: 16px 0;
+      flex-wrap: wrap;
+    }
+
+
+    .stats div {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+
+    .stats span {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+
+    .board {
+      display: grid;
+      gap: 12px;
+      justify-content: center;
+      align-content: center;
+    }
+
+
+    .board.grid-easy {
+      grid-template-columns: repeat(4, 110px);
+    }
+    .board.grid-medium {
+      grid-template-columns: repeat(4, 110px);
+    }
+    .board.grid-hard {
+      grid-template-columns: repeat(4, 110px);
+    }
+
+
+    .card {
+      width: 110px;
+      height: 140px;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.45s;
+      cursor: pointer;
+      border-radius: 12px;
+      box-shadow: 0 6px 14px rgba(2, 6, 23, 0.6);
+    }
+
+
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+    }
+
+
+    .front,
+    .back {
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backface-visibility: hidden;
+    }
+
+
+    .front {
+      background: linear-gradient(180deg, #e6eef8 0%, #cfe8ff 100%);
+      color: #07122a;
+      flex-direction: column;
+      gap: 6px;
+      text-align: center;
+      transform: rotateY(180deg);
+      padding: 10px;
+    }
+
+
+    .front img {
+      width: 60px;
+      height: 60px;
+    }
+
+
+    .back {
+      background: linear-gradient(180deg, #0f1724, #07122a);
+      color: var(--muted);
+      font-size: 32px;
+    }
+
+
+    .card.flipped {
+      transform: rotateY(180deg);
+    }
+
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(2, 6, 23, 0.8);
+      z-index: 100;
+    }
+
+
+    .hidden {
+      display: none;
+    }
+
+
+    .overlay-card {
+      background: #0b1626;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      min-width: 260px;
+    }
+
+
+    .overlay-icon img {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 8px;
+    }
+
+
+    footer {
+      margin-top: 16px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+
+    @media (max-width: 600px) {
+      .card {
+        width: 80px;
+        height: 100px;
+      }
+     
+      .board.grid-easy,
+      .board.grid-medium,
+      .board.grid-hard {
+        grid-template-columns: repeat(4, 80px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>EduMemory Card Game</h1>
+      <div class="controls">
+        <label for="level">Level:</label>
+        <select id="level">
+          <option value="easy">Easy (4 pairs)</option>
+          <option value="medium" selected>Medium (6 pairs)</option>
+          <option value="hard">Hard (8 pairs)</option>
+        </select>
+        <button id="startBtn">Start Game</button>
+        <button id="hintBtn">Use Hint (2)</button>
+        <button id="helpBtn">Help</button>
+      </div>
+    </header>
+
+
+    <section class="stats">
+      <div>Attempts: <span id="attempts">0</span></div>
+      <div>Matches: <span id="matches">0</span></div>
+      <div>Accuracy: <span id="accuracy">0%</span></div>
+    </section>
+
+
+    <section id="board" class="board grid-medium"></section>
+
+
+    <div id="matchOverlay" class="overlay hidden">
+      <div class="overlay-card" id="overlayCard" title="Double-click to continue">
+        <div class="overlay-icon" id="overlayIcon"></div>
+        <h3 id="overlayTitle"></h3>
+        <p id="overlayDesc"></p>
+        <small>Double-click the image to continue</small>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    const CARD_LIBRARY = [
+      {id:'python', icon:'https://cdn-icons-png.flaticon.com/512/5968/5968350.png', title:'Python', desc:'A versatile high-level language used in web, data, and AI.'},
+      {id:'javascript', icon:'https://cdn-icons-png.flaticon.com/512/5968/5968292.png', title:'JavaScript', desc:'The web’s interactive scripting language.'},
+      {id:'java', icon:'https://cdn-icons-png.flaticon.com/512/226/226777.png', title:'Java', desc:'A robust, portable, object-oriented programming language.'},
+      {id:'html', icon:'https://cdn-icons-png.flaticon.com/512/5968/5968267.png', title:'HTML', desc:'The structure of web pages.'},
+      {id:'css', icon:'https://cdn-icons-png.flaticon.com/512/5968/5968242.png', title:'CSS', desc:'The design language for styling web pages.'},
+      {id:'cpu', icon:'https://cdn-icons-png.flaticon.com/128/984/984442.png', title:'CPU', desc:'The computer’s central processing brain.'},
+      {id:'ram', icon:'https://cdn-icons-png.flaticon.com/128/543/543279.png', title:'RAM', desc:'Fast, temporary memory for running programs.'},
+      {id:'ssd', icon:'https://cdn-icons-png.flaticon.com/128/4854/4854407.png', title:'SSD', desc:'High-speed solid-state storage device.'}
+    ];
+
+
+    const LEVELS = { easy: 4, medium: 6, hard: 8 };
+    let deck = [], flipped = [], matches = 0, attempts = 0, hintsLeft = 2;
+
+
+    const boardEl = document.getElementById('board');
+    const levelSel = document.getElementById('level');
+    const startBtn = document.getElementById('startBtn');
+    const matchOverlay = document.getElementById('matchOverlay');
+    const overlayIcon = document.getElementById('overlayIcon');
+    const overlayTitle = document.getElementById('overlayTitle');
+    const overlayDesc = document.getElementById('overlayDesc');
+    const overlayCard = document.getElementById('overlayCard');
+    const attemptsEl = document.getElementById('attempts');
+    const matchesEl = document.getElementById('matches');
+    const accuracyEl = document.getElementById('accuracy');
+    const hintBtn = document.getElementById('hintBtn');
+    const helpBtn = document.getElementById('helpBtn');
+
+
+    startBtn.addEventListener('click', startGame);
+    overlayCard.addEventListener('dblclick', () => matchOverlay.classList.add('hidden'));
+    hintBtn.addEventListener('click', useHint);
+    helpBtn.addEventListener('click', showHelp);
+
+
+    function startGame() {
+      matches = 0;
+      attempts = 0;
+      hintsLeft = 2;
+      flipped = [];
+      hintBtn.textContent = "Use Hint (2)";
+      updateStats();
+
+
+      const pairs = LEVELS[levelSel.value];
+      const chosen = CARD_LIBRARY.slice(0, pairs);
+      deck = shuffle([...chosen, ...chosen]);
+      renderBoard();
+    }
+
+
+    function renderBoard() {
+      boardEl.className = 'board grid-' + levelSel.value;
+      boardEl.innerHTML = '';
+      deck.forEach((card) => {
+        const el = document.createElement('div');
+        el.className = 'card';
+        el.dataset.id = card.id;
+        el.innerHTML = `
+          <div class="card-inner">
+            <div class="front"><img src="${card.icon}" alt="${card.title}"><div class="label">${card.title}</div></div>
+            <div class="back">?</div>
+          </div>`;
+        el.addEventListener('click', () => flipCard(el, card));
+        boardEl.appendChild(el);
+      });
+    }
+
+
+    function flipCard(el, card) {
+      if (el.classList.contains('flipped') || el.classList.contains('matched')) return;
+      if (flipped.length === 2) return;
+
+
+      el.classList.add('flipped');
+      flipped.push({el, card});
+
+
+      if (flipped.length === 2) {
+        attempts++;
+        if (flipped[0].card.id === flipped[1].card.id) {
+          matches++;
+          flipped[0].el.classList.add('matched');
+          flipped[1].el.classList.add('matched');
+          showDescription(flipped[0].card);
+          flipped = [];
+        } else {
+          setTimeout(() => {
+            flipped.forEach(f => f.el.classList.remove('flipped'));
+            flipped = [];
+          }, 800);
+        }
+        updateStats();
+        if (matches === deck.length / 2) {
+          setTimeout(() => alert(`🎉 Game Over! Accuracy: ${accuracyEl.textContent}`), 500);
+        }
+      }
+    }
+
+
+    function showDescription(card) {
+      overlayIcon.innerHTML = `<img src="${card.icon}" alt="${card.title}">`;
+      overlayTitle.textContent = card.title;
+      overlayDesc.textContent = card.desc;
+      matchOverlay.classList.remove('hidden');
+    }
+
+
+    function updateStats() {
+      attemptsEl.textContent = attempts;
+      matchesEl.textContent = matches;
+      accuracyEl.textContent = attempts ? Math.round((matches / attempts) * 100) + '%' : '0%';
+    }
+
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+
+    function useHint() {
+      if (hintsLeft <= 0) {
+        alert("No hints left!");
+        return;
+      }
+      hintsLeft--;
+      hintBtn.textContent = `Use Hint (${hintsLeft})`;
+      const cards = document.querySelectorAll('.card:not(.matched)');
+      cards.forEach(c => c.classList.add('flipped'));
+      setTimeout(() => cards.forEach(c => c.classList.remove('flipped')), 1500);
+    }
+
+
+    function showHelp() {
+      alert("🧠 HOW TO PLAY:\n\n1️⃣ Click cards to flip them.\n2️⃣ Match pairs of programming icons.\n3️⃣ When you match, read the info then double-click to continue.\n4️⃣ You have 2 hints that briefly show all cards.\n5️⃣ Your accuracy is shown at the end of the game!");
+    }
+
+
+    startGame();
+  </script>
+</body>
+</html>
+
+
+

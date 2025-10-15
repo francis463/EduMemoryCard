@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>EduMemory Card Game - Welcome</title>
+  <link rel="icon" type="image/png" sizes="64x64" href="edumemory game.png">
+  <style>
+    :root {
+      --bg: #0f1724;
+      --accent: #7dd3fc;
+      --muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, sans-serif;
+      background: linear-gradient(180deg, #071028 0%, #08122a 100%);
+      color: #e6eef8;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .landing {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 16px;
+      padding: 40px 30px;
+      box-shadow: 0 10px 30px rgba(2, 6, 23, 0.6);
+      width: 90%;
+      max-width: 600px;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+      color: var(--accent);
+    }
+
+    p {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    a.button {
+      padding: 10px 18px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: var(--accent);
+      color: #07122a;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    a.button:hover {
+      background: #a5e8ff;
+      transform: scale(1.05);
+    }
+
+    footer {
+      margin-top: 20px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    #how-to-play {
+      margin-top: 30px;
+      text-align: left;
+      background: rgba(255,255,255,0.05);
+      border-radius: 10px;
+      padding: 20px;
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 1.8rem; }
+      p { font-size: 0.95rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="landing">
+    <h1>Welcome to EduMemory!</h1>
+    <p>
+      Train your brain and test your knowledge with this fun and educational memory card game.
+      Choose your difficulty level, match pairs, and challenge yourself to beat your best score!
+    </p>
+
+    <div class="buttons">
+      <a href="game.html" class="button">Play Now</a>
+      <a href="#" id="howBtn" class="button" style="background:transparent;border:1px solid var(--accent);color:var(--accent);">How to Play</a>
+    </div>
+
+    <div id="how-to-play">
+      <h3 style="color:var(--accent);margin-top:0;">How to Play</h3>
+      <ul style="color:var(--muted);line-height:1.7;">
+        <li>Select your difficulty level (Easy, Medium, Hard).</li>
+        <li>Flip two cards — if they match, they stay revealed!</li>
+        <li>Try to match all pairs with the fewest attempts possible.</li>
+        <li>Use your hints wisely — you only get a few per round.</li>
+        <li>Track your accuracy and score as you play!</li>
+      </ul>
+    </div>
+
+    <footer>© 2025 EduMemory Card Game. All rights reserved.</footer>
+  </div>
+
+  <script>
+    document.getElementById("howBtn").addEventListener("click", function(e){
+      e.preventDefault();
+      const section = document.getElementById("how-to-play");
+      section.style.display = section.style.display === "block" ? "none" : "block";
+    });
+  </script>
+</body>
+</html>
