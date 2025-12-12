@@ -1,7 +1,7 @@
 
   # EduMemory Card Game
 
-  This is a code bundle for EduMemory Card Game. The original project is available at https://www.figma.com/design/18kz6sgfYRnrNViUHZPDB2/EduMemory-Card-Game.
+  This is a code bundle for EduMemory Card Game. The original project is available at vs studio.
 
   ## Running the code
 
